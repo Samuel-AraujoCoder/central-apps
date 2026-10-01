@@ -352,7 +352,7 @@
       flex-direction: column;
       gap: 14px;
       box-shadow: var(--shadow);
-      transition: .25s;
+      transition: all .3s cubic-bezier(.4, 0, .2, 1);
       position: relative;
       overflow: hidden;
       backdrop-filter: blur(10px);
@@ -367,11 +367,11 @@
       height: 4px;
       background: var(--card-accent, var(--primary));
       opacity: 0;
-      transition: .2s;
+      transition: .3s;
     }
 
     .card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-6px);
       box-shadow: var(--shadow-hover);
     }
 
@@ -393,10 +393,25 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
       color: #fff;
       flex-shrink: 0;
       box-shadow: 0 6px 16px rgba(0,0,0,.1);
+      transition: transform .3s, box-shadow .3s;
+    }
+
+    .icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .card:hover .icon {
+      transform: scale(1.08);
+      box-shadow: 0 8px 24px rgba(0,0,0,.15);
     }
 
     .arrow {
@@ -412,7 +427,11 @@
       transform: translateX(0);
     }
 
-    .card h3 { font-size: 1.1rem; font-weight: 600; }
+    .card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
 
     .card p {
       color: var(--text-muted);
@@ -468,7 +487,7 @@
       <input type="text" class="login-input" id="login" placeholder="Usuário (ex: legal)" />
       <div class="senha-wrapper">
         <input type="password" class="login-input" id="senha" placeholder="Senha" style="margin-bottom:0;" />
-        <button type="button" class="toggle-senha" id="toggleSenha">👁️</button>
+        <button type="button" class="toggle-senha" id="toggleSenha">️👁️</button>
       </div>
       <div class="login-options">
         <label><input type="checkbox" id="lembrar" /> Manter conectado</label>
@@ -545,9 +564,16 @@
     ];
 
     /***************************************
+     * ÍCONES SVG (estilo Lucide/Phosphor)
+     ***************************************/
+    const ICONS = {
+      chart: `<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg>`,
+      calendar: `<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>`,
+      folder: `<svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><path d="M9 13h6M9 17h6"/></svg>`
+    };
+
+    /***************************************
      * APLICATIVOS
-     * depts = departamentos com acesso
-     * O admin (login "adm") enxerga tudo.
      ***************************************/
     const APPS = [
       {
@@ -555,7 +581,7 @@
         url: "https://script.google.com/macros/s/AKfycbzjENLDvuU9sg4w_dEitwnon0fVOpIvh6nmTbnX7OaqdwqB9pLXgM08rnExbkGrJsnG4w/exec",
         descricao: "Gera propostas automaticamente e relatórios de negociação.",
         depts: ["Financeiro", "Legal"],
-        icone: "📈",
+        icone: ICONS.chart,
         cor: "#2563EB"
       },
       {
@@ -563,7 +589,7 @@
         url: "https://script.google.com/macros/s/AKfycbxYLSyXaIgP0GLr0uNQaR-u74olbHnIet2Lhw65zT1iX90VjjbOP5xkU_1onkQANGqqLQ/exec",
         descricao: "Gera propostas automaticamente e relatórios de negociação.",
         depts: ["Legal"],
-        icone: "🗓️",
+        icone: ICONS.calendar,
         cor: "#2563EB"
       },
       {
@@ -571,7 +597,7 @@
         url: "https://script.google.com/macros/s/AKfycbwqtTjOr2F7xwkyHEFqobNiH5z9CAVWDEnpegxzjiRMV-1iUJS-_kAkfvHDtZW8eukcIA/exec",
         descricao: "Gerador de protocolos de entrega e acompanhamento.",
         depts: ["Todos"],
-        icone: "📨",
+        icone: ICONS.folder,
         cor: "#10B981"
       }
     ];
@@ -618,18 +644,14 @@
     }
 
     function nomeDepartamento() {
-      return usuarioAtual.login === 'adm'
-        ? 'Administrador'
-        : usuarioAtual.departamento;
+      return usuarioAtual.login === 'adm' ? 'Administrador' : usuarioAtual.departamento;
     }
 
     function mostrarPortal() {
       document.getElementById('loginOverlay').classList.add('hidden');
       document.getElementById('portal').classList.remove('hidden');
-      document.getElementById('bemVindo').textContent =
-        `Departamento ${nomeDepartamento()}`;
-      document.getElementById('saudacao').textContent =
-        `${saudacao()}, ${nomeDepartamento()}`;
+      document.getElementById('bemVindo').textContent = `Departamento ${nomeDepartamento()}`;
+      document.getElementById('saudacao').textContent = `${saudacao()}, ${nomeDepartamento()}`;
       montarChips();
       renderizar();
     }
