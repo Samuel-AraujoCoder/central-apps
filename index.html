@@ -12,6 +12,7 @@
       --muted: #6b7280;
       --border: #e5e7eb;
       --primary: #4285F4;
+      --danger: #EA4335;
     }
     body.dark {
       --bg: #0f172a;
@@ -115,16 +116,114 @@
       cursor: pointer;
       font-size: .9rem;
     }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+      border-color: var(--danger);
+    }
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+    .login-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,.1);
+    }
+    .login-box h2 { margin-bottom: 8px; font-size: 1.4rem; }
+    .login-box p { color: var(--muted); margin-bottom: 24px; font-size: .9rem; }
+    .login-input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .login-input:focus { border-color: var(--primary); }
+    .login-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .login-options label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .error {
+      color: var(--danger);
+      font-size: .85rem;
+      margin-top: 12px;
+      display: none;
+    }
+    .top-actions { display: flex; gap: 10px; }
+    .hidden { display: none !important; }
+    .senha-wrapper { position: relative; }
+    .toggle-senha {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .bem-vindo { font-size: .85rem; color: var(--muted); }
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- TELA DE LOGIN -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h2>🔐 Acesso restrito</h2>
+      <p>Central de Aplicativos</p>
+      <input type="text" class="login-input" id="login" placeholder="Usuário (ex: legal)" />
+      <div class="senha-wrapper">
+        <input type="password" class="login-input" id="senha" placeholder="Senha" style="margin-bottom:12px;" />
+        <button type="button" class="toggle-senha" id="toggleSenha">👁️</button>
+      </div>
+      <div class="login-options">
+        <label><input type="checkbox" id="lembrar" /> Manter conectado</label>
+      </div>
+      <button class="btn btn-primary" id="btnEntrar" style="width:100%; padding:12px;">Entrar</button>
+      <div class="error" id="erro">Usuário ou senha incorretos.</div>
+    </div>
+  </div>
+
+  <!-- PORTAL -->
+  <div class="container hidden" id="portal">
     <header>
       <div>
         <h1>🚀 Central de Aplicativos</h1>
-        <div class="sub">Todos os seus projetos em um só lugar</div>
+        <div class="sub">
+          <span id="bemVindo"></span>
+        </div>
       </div>
-      <button class="btn" id="btnTheme">🌙</button>
+      <div class="top-actions">
+        <button class="btn" id="btnTheme">🌙</button>
+        <button class="btn btn-danger" id="btnSair">Sair</button>
+      </div>
     </header>
 
     <input class="search" id="search" placeholder="🔍 Buscar aplicativo..." />
@@ -136,14 +235,51 @@
 
   <script>
     /***************************************
-     * EDITE AQUI SEUS APLICATIVOS
+     * 👥 USUÁRIOS / DEPARTAMENTOS
+     *
+     * ⚠️ IMPORTANTE: o login deve ser em MINÚSCULAS.
+     * Os hashes abaixo já estão preenchidos.
+     ***************************************/
+    const USUARIOS = [
+      {
+        login: "legal",
+        senhaHash: "a554c344d92205ed1368c15b84e4f46724cddcbf4456cf0ab7a39dcc94a173dd",
+        departamento: "Legal"
+      },
+      {
+        login: "fiscal",
+        senhaHash: "d173bd39760c1e3d1ca50ba3fe3c9443c4ad47351e1d8ea4550c0f0c21cbd4e0",
+        departamento: "Fiscal"
+      },
+      {
+        login: "pessoal",
+        senhaHash: "66f8617432a2a1ea5be2b07631145ea06b25257ddb0ce9db128e31f366ec4cd9",
+        departamento: "Pessoal"
+      },
+      {
+        login: "financeiro",
+        senhaHash: "bdca43b98135a10c8da4b9e037301b22c63cab5b88d5bf611b88bca39c29bb0f",
+        departamento: "Financeiro"
+      },
+      {
+        login: "adm",
+        senhaHash: "376110caa66edf9fa4279955a0eed251f9ca6c40d9a4b909c89f2911af0fd5a1",
+        departamento: "Todos"
+      }
+    ];
+
+    /***************************************
+     * 📱 SEUS APLICATIVOS
+     *
+     * depts = lista de departamentos que podem ver o app.
+     * Use ["Todos"] para aparecer para todo mundo.
      ***************************************/
     const APPS = [
       {
         nome: "Painel de propostas",
         url: "https://script.google.com/macros/s/AKfycbzjENLDvuU9sg4w_dEitwnon0fVOpIvh6nmTbnX7OaqdwqB9pLXgM08rnExbkGrJsnG4w/exec",
         descricao: "Gera propostas automaticamente e relatorios",
-        categoria: "Financeiro",
+        depts: ["Financeiro", "Legal"],
         icone: "📈",
         cor: "#4285F4"
       },
@@ -151,16 +287,116 @@
         nome: "Docvia - Protocolos",
         url: "https://script.google.com/macros/s/AKfycbwqtTjOr2F7xwkyHEFqobNiH5z9CAVWDEnpegxzjiRMV-1iUJS-_kAkfvHDtZW8eukcIA/exec",
         descricao: "Gerador de protocolos de entrega",
-        categoria: "Geral",
+        depts: ["Todos"],
         icone: "📨",
         cor: "#34A853"
       }
+      // Adicione mais apps aqui:
+      // {
+      //   nome: "Nome do App",
+      //   url: "https://...",
+      //   descricao: "O que faz",
+      //   depts: ["Legal", "Fiscal"],
+      //   icone: "⚖️",
+      //   cor: "#EA4335"
+      // }
     ];
 
+    /***************************************
+     * LOGIN
+     ***************************************/
+    let usuarioAtual = null;
+
+    async function hash(texto) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(texto);
+      const buf = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function verificarSenha() {
+      const login = document.getElementById('login').value.trim().toLowerCase();
+      const senha = document.getElementById('senha').value;
+      const hashDigitado = await hash(senha);
+      const erro = document.getElementById('erro');
+
+      const usuario = USUARIOS.find(u => u.login === login && u.senhaHash === hashDigitado);
+
+      if (usuario) {
+        usuarioAtual = usuario;
+        if (document.getElementById('lembrar').checked) {
+          localStorage.setItem('centralAppsLogin', JSON.stringify({ login: usuario.login }));
+        } else {
+          sessionStorage.setItem('centralAppsLogin', JSON.stringify({ login: usuario.login }));
+        }
+        mostrarPortal();
+      } else {
+        erro.style.display = 'block';
+        document.getElementById('senha').value = '';
+      }
+    }
+
+    function mostrarPortal() {
+      document.getElementById('loginOverlay').classList.add('hidden');
+      document.getElementById('portal').classList.remove('hidden');
+      document.getElementById('bemVindo').textContent =
+        `👋 Departamento ${usuarioAtual.departamento}`;
+      montarChips();
+      renderizar();
+    }
+
+    function sair() {
+      localStorage.removeItem('centralAppsLogin');
+      sessionStorage.removeItem('centralAppsLogin');
+      usuarioAtual = null;
+      location.reload();
+    }
+
+    function recuperarLogin() {
+      const salvo = JSON.parse(
+        localStorage.getItem('centralAppsLogin') || sessionStorage.getItem('centralAppsLogin') || 'null'
+      );
+      if (salvo) {
+        const usuario = USUARIOS.find(u => u.login === salvo.login);
+        if (usuario) {
+          usuarioAtual = usuario;
+          mostrarPortal();
+        }
+      }
+    }
+
+    document.getElementById('btnEntrar').addEventListener('click', verificarSenha);
+    document.getElementById('senha').addEventListener('keypress', e => {
+      if (e.key === 'Enter') verificarSenha();
+    });
+    document.getElementById('btnSair').addEventListener('click', sair);
+    document.getElementById('toggleSenha').addEventListener('click', () => {
+      const input = document.getElementById('senha');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    });
+
+    recuperarLogin();
+
+    /***************************************
+     * PORTAL
+     ***************************************/
     let categoriaAtiva = 'Todas';
 
+    function appsVisiveis() {
+      return APPS.filter(a => {
+        if (usuarioAtual.departamento === 'Todos') return true;
+        if (a.depts.includes('Todos')) return true;
+        return a.depts.includes(usuarioAtual.departamento);
+      });
+    }
+
     function montarChips() {
-      const categorias = ['Todas', ...new Set(APPS.map(a => a.categoria))];
+      const apps = appsVisiveis();
+      const depts = new Set();
+      apps.forEach(a => a.depts.forEach(d => {
+        if (d !== 'Todos') depts.add(d);
+      }));
+      const categorias = ['Todas', ...depts];
       const chips = document.getElementById('chips');
       chips.innerHTML = categorias.map(c =>
         `<button class="chip ${c === categoriaAtiva ? 'active' : ''}" data-cat="${c}">${c}</button>`
@@ -176,9 +412,12 @@
     }
 
     function renderizar() {
+      const apps = appsVisiveis();
       const termo = document.getElementById('search').value.toLowerCase();
-      const filtrados = APPS.filter(a => {
-        const okCat = categoriaAtiva === 'Todas' || a.categoria === categoriaAtiva;
+      const filtrados = apps.filter(a => {
+        const okCat = categoriaAtiva === 'Todas' ||
+          a.depts.includes(categoriaAtiva) ||
+          a.depts.includes('Todos');
         const okTermo = !termo ||
           a.nome.toLowerCase().includes(termo) ||
           a.descricao.toLowerCase().includes(termo);
@@ -200,7 +439,7 @@
           <div class="icon" style="background:${a.cor}">${a.icone}</div>
           <h3>${a.nome}</h3>
           <p>${a.descricao || 'Sem descrição'}</p>
-          <span class="tag">${a.categoria}</span>
+          <span class="tag">${a.depts.join(' + ')}</span>
         </a>
       `).join('');
     }
@@ -212,9 +451,6 @@
       document.getElementById('btnTheme').textContent =
         document.body.classList.contains('dark') ? '☀️' : '🌙';
     });
-
-    montarChips();
-    renderizar();
   </script>
 </body>
 </html>
