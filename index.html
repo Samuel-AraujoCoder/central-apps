@@ -6,239 +6,516 @@
   <title>Central de Aplicativos</title>
   <style>
     :root {
-      --bg: #f4f6fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --primary: #4285F4;
-      --danger: #EA4335;
+      --primary: #2563EB;
+      --primary-dark: #1D4ED8;
+      --primary-light: #EFF6FF;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --text: #1E293B;
+      --text-muted: #64748B;
+      --bg-start: #E0F2FE;
+      --bg-end: #F0F9FF;
+      --card: rgba(255, 255, 255, 0.95);
+      --border: rgba(255, 255, 255, 0.6);
+      --shadow: 0 4px 24px rgba(30, 58, 138, 0.08);
+      --shadow-hover: 0 12px 40px rgba(30, 58, 138, 0.15);
     }
+
     body.dark {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --border: #334155;
+      --text: #F1F5F9;
+      --text-muted: #94A3B8;
+      --bg-start: #0F172A;
+      --bg-end: #1E293B;
+      --card: rgba(30, 41, 59, 0.95);
+      --border: rgba(255, 255, 255, 0.1);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+      --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.4);
     }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-      background: var(--bg);
+      font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
       color: var(--text);
-      padding: 24px 16px 60px;
+      min-height: 100vh;
       transition: .3s;
     }
-    .container { max-width: 1100px; margin: 0 auto; }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    h1 { font-size: 1.6rem; }
-    .sub { color: var(--muted); font-size: .95rem; margin-top: 4px; }
-    .search {
-      width: 100%;
-      padding: 12px 16px;
-      font-size: 1rem;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--card);
-      color: var(--text);
-      margin-bottom: 16px;
-      outline: none;
-    }
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-    .chip {
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      cursor: pointer;
-      font-size: .85rem;
-    }
-    .chip.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      text-decoration: none;
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      transition: .15s;
-    }
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,.12);
-    }
-    .icon {
-      width: 48px; height: 48px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      color: #fff;
-    }
-    .card h3 { font-size: 1.05rem; }
-    .card p { color: var(--muted); font-size: .85rem; flex: 1; }
-    .tag {
-      align-self: flex-start;
-      font-size: .72rem;
-      padding: 3px 10px;
-      border-radius: 999px;
-      background: rgba(66,133,244,.12);
-      color: var(--primary);
-    }
-    .empty { text-align: center; color: var(--muted); padding: 40px 0; }
-    .btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: .9rem;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-    .btn-danger {
-      background: var(--danger);
-      color: #fff;
-      border-color: var(--danger);
-    }
+
+    /* LOGIN */
     .login-overlay {
       position: fixed;
       inset: 0;
-      background: var(--bg);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
       padding: 20px;
+      background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+      z-index: 9999;
     }
+
     .login-box {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 36px;
+      border-radius: 24px;
+      padding: 48px 40px;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
+      box-shadow: var(--shadow-hover);
       text-align: center;
-      box-shadow: 0 10px 40px rgba(0,0,0,.1);
+      backdrop-filter: blur(10px);
     }
-    .login-box h2 { margin-bottom: 8px; font-size: 1.4rem; }
-    .login-box p { color: var(--muted); margin-bottom: 24px; font-size: .9rem; }
-    .login-input {
-      width: 100%;
-      padding: 12px 14px;
-      font-size: 1rem;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--bg);
-      color: var(--text);
-      margin-bottom: 12px;
-      outline: none;
-    }
-    .login-input:focus { border-color: var(--primary); }
-    .login-options {
+
+    .login-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--primary) 0%, #3B82F6 100%);
+      color: #fff;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      font-size: .8rem;
-      color: var(--muted);
-      margin-bottom: 20px;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 24px;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
     }
-    .login-options label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-    .error {
-      color: var(--danger);
-      font-size: .85rem;
-      margin-top: 12px;
-      display: none;
+
+    .login-box h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
-    .top-actions { display: flex; gap: 10px; }
-    .hidden { display: none !important; }
+
+    .login-box p {
+      color: var(--text-muted);
+      font-size: .9rem;
+      margin-bottom: 32px;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: .95rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-end);
+      color: var(--text);
+      margin-bottom: 14px;
+      outline: none;
+      transition: .2s;
+    }
+
+    .login-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
     .senha-wrapper { position: relative; }
+
     .toggle-senha {
       position: absolute;
-      right: 12px;
+      right: 14px;
       top: 50%;
       transform: translateY(-50%);
       background: none;
       border: none;
       cursor: pointer;
-      color: var(--muted);
+      color: var(--text-muted);
       font-size: 1rem;
+      margin-top: -7px;
     }
-    .bem-vindo { font-size: .85rem; color: var(--muted); }
+
+    .login-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .85rem;
+      color: var(--text-muted);
+      margin: 8px 0 24px;
+    }
+
+    .login-options label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .btn {
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: .95rem;
+      font-weight: 500;
+      transition: .2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+      width: 100%;
+      padding: 14px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-outline {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger) 0%, #DC2626 100%);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
+    }
+
+    .error {
+      color: var(--danger);
+      font-size: .85rem;
+      margin-top: 16px;
+      display: none;
+      padding: 10px;
+      background: rgba(239, 68, 68, 0.08);
+      border-radius: 8px;
+    }
+
+    /* PORTAL */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+    }
+
+    .topbar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary) 0%, #3B82F6 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.22);
+    }
+
+    .brand-info h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .brand-info p {
+      font-size: .8rem;
+      color: var(--text-muted);
+    }
+
+    .top-actions { display: flex; gap: 10px; }
+
+    .welcome-card {
+      background: linear-gradient(135deg, var(--primary) 0%, #3B82F6 100%);
+      color: #fff;
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25);
+    }
+
+    .welcome-card h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .welcome-card p {
+      opacity: .9;
+      font-size: .95rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 260px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 14px 18px 14px 46px;
+      font-size: .95rem;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card);
+      color: var(--text);
+      outline: none;
+      box-shadow: var(--shadow);
+      transition: .2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1), var(--shadow);
+    }
+
+    .search-box::before {
+      content: "🔍";
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: .6;
+    }
+
+    .chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .chip {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: .85rem;
+      font-weight: 500;
+      box-shadow: var(--shadow);
+      transition: .2s;
+    }
+
+    .chip:hover {
+      transform: translateY(-1px);
+      color: var(--primary);
+    }
+
+    .chip.active {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: var(--shadow);
+      transition: .25s;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--card-accent, var(--primary));
+      opacity: 0;
+      transition: .2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 6px 16px rgba(0,0,0,.1);
+    }
+
+    .arrow {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: .2s;
+    }
+
+    .card:hover .arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .card h3 { font-size: 1.1rem; font-weight: 600; }
+
+    .card p {
+      color: var(--text-muted);
+      font-size: .88rem;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .tag {
+      font-size: .72rem;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 60px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      font-size: .95rem;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 600px) {
+      .login-box { padding: 36px 24px; }
+      .container { padding: 20px 16px; }
+      .welcome-card { padding: 22px; }
+      .topbar { padding: 14px 18px; }
+    }
   </style>
 </head>
 <body>
   <!-- TELA DE LOGIN -->
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
-      <h2>🔐 Acesso restrito</h2>
-      <p>Central de Aplicativos</p>
+      <div class="login-logo">🚀</div>
+      <h2>Acesso restrito</h2>
+      <p>Centralize todos os seus aplicativos em um só lugar</p>
       <input type="text" class="login-input" id="login" placeholder="Usuário (ex: legal)" />
       <div class="senha-wrapper">
-        <input type="password" class="login-input" id="senha" placeholder="Senha" style="margin-bottom:12px;" />
+        <input type="password" class="login-input" id="senha" placeholder="Senha" style="margin-bottom:0;" />
         <button type="button" class="toggle-senha" id="toggleSenha">👁️</button>
       </div>
       <div class="login-options">
         <label><input type="checkbox" id="lembrar" /> Manter conectado</label>
       </div>
-      <button class="btn btn-primary" id="btnEntrar" style="width:100%; padding:12px;">Entrar</button>
+      <button class="btn btn-primary" id="btnEntrar">Entrar</button>
       <div class="error" id="erro">Usuário ou senha incorretos.</div>
     </div>
   </div>
 
   <!-- PORTAL -->
   <div class="container hidden" id="portal">
-    <header>
-      <div>
-        <h1>🚀 Central de Aplicativos</h1>
-        <div class="sub">
-          <span id="bemVindo"></span>
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-icon">🚀</div>
+        <div class="brand-info">
+          <h1>Central de Aplicativos</h1>
+          <p id="bemVindo">Departamento —</p>
         </div>
       </div>
       <div class="top-actions">
-        <button class="btn" id="btnTheme">🌙</button>
+        <button class="btn btn-outline" id="btnTheme">🌙</button>
         <button class="btn btn-danger" id="btnSair">Sair</button>
       </div>
-    </header>
+    </div>
 
-    <input class="search" id="search" placeholder="🔍 Buscar aplicativo..." />
+    <div class="welcome-card">
+      <h2 id="saudacao">Bem-vindo de volta</h2>
+      <p>Acesse abaixo as ferramentas disponíveis para o seu departamento.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <input id="search" placeholder="Buscar aplicativo..." />
+      </div>
+    </div>
 
     <div class="chips" id="chips"></div>
     <div class="grid" id="grid"></div>
-    <div class="empty" id="empty" style="display:none">Nenhum aplicativo encontrado.</div>
+    <div class="empty" id="empty" style="display:none">
+      Nenhum aplicativo encontrado.
+    </div>
   </div>
 
   <script>
     /***************************************
      * 👥 USUÁRIOS / DEPARTAMENTOS
-     *
-     * ⚠️ IMPORTANTE: o login deve ser em MINÚSCULAS.
-     * Os hashes abaixo já estão preenchidos.
      ***************************************/
     const USUARIOS = [
       {
@@ -269,37 +546,26 @@
     ];
 
     /***************************************
-     * 📱 SEUS APLICATIVOS
-     *
-     * depts = lista de departamentos que podem ver o app.
-     * Use ["Todos"] para aparecer para todo mundo.
+     * 📱 APLICATIVOS
+     * depts = lista de departamentos com acesso
      ***************************************/
     const APPS = [
       {
         nome: "Painel de propostas",
         url: "https://script.google.com/macros/s/AKfycbzjENLDvuU9sg4w_dEitwnon0fVOpIvh6nmTbnX7OaqdwqB9pLXgM08rnExbkGrJsnG4w/exec",
-        descricao: "Gera propostas automaticamente e relatorios",
+        descricao: "Gera propostas automaticamente e relatórios de negociação.",
         depts: ["Financeiro", "Legal"],
         icone: "📈",
-        cor: "#4285F4"
+        cor: "#2563EB"
       },
       {
         nome: "Docvia - Protocolos",
         url: "https://script.google.com/macros/s/AKfycbwqtTjOr2F7xwkyHEFqobNiH5z9CAVWDEnpegxzjiRMV-1iUJS-_kAkfvHDtZW8eukcIA/exec",
-        descricao: "Gerador de protocolos de entrega",
+        descricao: "Gerador de protocolos de entrega e acompanhamento.",
         depts: ["Todos"],
         icone: "📨",
-        cor: "#34A853"
+        cor: "#10B981"
       }
-      // Adicione mais apps aqui:
-      // {
-      //   nome: "Nome do App",
-      //   url: "https://...",
-      //   descricao: "O que faz",
-      //   depts: ["Legal", "Fiscal"],
-      //   icone: "⚖️",
-      //   cor: "#EA4335"
-      // }
     ];
 
     /***************************************
@@ -336,11 +602,20 @@
       }
     }
 
+    function saudacao() {
+      const hora = new Date().getHours();
+      if (hora < 12) return "Bom dia";
+      if (hora < 18) return "Boa tarde";
+      return "Boa noite";
+    }
+
     function mostrarPortal() {
       document.getElementById('loginOverlay').classList.add('hidden');
       document.getElementById('portal').classList.remove('hidden');
       document.getElementById('bemVindo').textContent =
-        `👋 Departamento ${usuarioAtual.departamento}`;
+        `Departamento ${usuarioAtual.departamento}`;
+      document.getElementById('saudacao').textContent =
+        `${saudacao()}, ${usuarioAtual.departamento === 'Todos' ? 'Administrador' : usuarioAtual.departamento}`;
       montarChips();
       renderizar();
     }
@@ -435,11 +710,19 @@
       empty.style.display = 'none';
 
       grid.innerHTML = filtrados.map(a => `
-        <a class="card" href="${a.url}" target="_blank" rel="noopener">
-          <div class="icon" style="background:${a.cor}">${a.icone}</div>
+        <a class="card" href="${a.url}" target="_blank" rel="noopener" style="--card-accent:${a.cor}">
+          <div class="card-header">
+            <div class="icon" style="background:${a.cor}">${a.icone}</div>
+            <span class="arrow">→</span>
+          </div>
           <h3>${a.nome}</h3>
           <p>${a.descricao || 'Sem descrição'}</p>
-          <span class="tag">${a.depts.join(' + ')}</span>
+          <div class="tags">
+            ${a.depts.includes('Todos')
+              ? '<span class="tag">Todos os departamentos</span>'
+              : a.depts.map(d => `<span class="tag">${d}</span>`).join('')
+            }
+          </div>
         </a>
       `).join('');
     }
